@@ -1,0 +1,7 @@
+{% extends 'base.html' %} {% block content %}
+<form action="/edit/{{ todo.id }}" method="POST" class="edit-form">
+  <input type="text" name="title" value="{{ todo.title }}" required />
+  <button type="submit" class="btn btn-primary">Update</button>
+</form>
+<a href="/" class="btn btn-secondary mt-2">Cancel</a>
+{% endblock %}

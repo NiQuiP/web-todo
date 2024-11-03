@@ -1,0 +1,87 @@
+{% extends 'base.html' %} {% block content %}
+<form action="/add" method="POST">
+  <input type="text" name="title" required placeholder="Add new todo" />
+  <button type="submit" class="btn btn-primary">Add</button>
+</form>
+
+<ul class="list-group mt-4">
+  {% for todo in todos %}
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center">
+      <input
+        type="checkbox"
+        id="checkbox-{{ todo.id }}"
+        class="todo-checkbox mr-2"
+      />
+      <span id="title-{{ todo.id }}" class="todo-title">
+        {{ todo.title }}
+      </span>
+    </div>
+    <div>
+      <a href="/edit/{{ todo.id }}" class="btn btn-warning btn-sm">Edit</a>
+      <form
+        id="form-hapus-{{ todo.id }}"
+        action="/delete/{{ todo.id }}"
+        hidden
+      ></form>
+      <a onclick="hapus({{ todo.id }})" class="btn btn-danger btn-sm">Delete</a>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script
+  src="https://code.jquery.com/jquery-3.7.1.min.js"
+  integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+  crossorigin="anonymous"
+></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var checkboxes = document.querySelectorAll(".todo-checkbox");
+
+      checkboxes.forEach(function (checkbox) {
+        checkbox.addEventListener("change", function () {
+          var todoId = this.id.split("-")[1];
+          var titleSpan = document.getElementById("title-" + todoId);
+
+          if (this.checked) {
+            titleSpan.innerHTML = "<del>" + titleSpan.textContent + "</del>";
+          } else {
+            titleSpan.innerHTML = titleSpan.textContent;
+          }
+        });
+      });
+    });
+
+    function hapus(id) {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          var formHapus = document.getElementById("form-hapus-" + id);
+          formHapus.submit();
+        }
+      });
+    }
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        Swal.fire({
+          icon: "success",  // SweetAlert akan menggunakan kategori sebagai ikon
+          title: "{{ message }}",
+          showConfirmButton: true,
+          timer: 2000  // Durasi pesan muncul dalam milidetik
+        });
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+</script>
+{% endblock %}
