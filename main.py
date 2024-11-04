@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request, url_for, redirect, flash
 import mysql.connector
+import os
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.urandom(24)
 
 db_config = {
     'user': 'usfrctvw6bdtqd9z',
